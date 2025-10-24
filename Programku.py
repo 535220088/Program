@@ -154,14 +154,14 @@ if df is not None:
     input_data['Manggarai BKB'] = st.sidebar.number_input("Manggarai BKB (cm)", min_value=0.0, value=620.0, format="%.1f")
     input_data['PA. Karet'] = st.sidebar.number_input("PA. Karet (cm)", min_value=0.0, value=260.0, format="%.1f")
     
-    st.sidebar.subheader("Data Cuaca Bogor (Citeko)")
+    st.sidebar.subheader("Data Cuaca Bogor")
     input_data['TN_Bogor'] = st.sidebar.number_input("Suhu Min Bogor (°C)", min_value=0.0, value=19.6, format="%.1f")
     input_data['TX_Bogor'] = st.sidebar.number_input("Suhu Max Bogor (°C)", min_value=0.0, value=25.8, format="%.1f")
     input_data['TAVG_Bogor'] = st.sidebar.number_input("Suhu Rata-rata Bogor (°C)", min_value=0.0, value=22.2, format="%.1f")
     input_data['RH_AVG_Bogor'] = st.sidebar.number_input("Kelembaban Rata-rata Bogor (%)", min_value=0.0, value=92.0, format="%.1f")
     input_data['RR_Bogor'] = st.sidebar.number_input("Curah Hujan Bogor (mm)", min_value=0.0, value=23.5, format="%.1f")
 
-    st.sidebar.subheader("Data Cuaca Jakarta (Kemayoran)")
+    st.sidebar.subheader("Data Cuaca Jakarta")
     input_data['TN_Jakarta'] = st.sidebar.number_input("Suhu Min Jakarta (°C)", min_value=0.0, value=26.4, format="%.1f")
     input_data['TX_Jakarta'] = st.sidebar.number_input("Suhu Max Jakarta (°C)", min_value=0.0, value=32.2, format="%.1f")
     input_data['TAVG_Jakarta'] = st.sidebar.number_input("Suhu Rata-rata Jakarta (°C)", min_value=0.0, value=29.6, format="%.1f")
