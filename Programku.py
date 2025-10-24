@@ -228,5 +228,5 @@ if df is not None:
     # Tampilkan cuplikan data
     st.header("📂 Cuplikan Data Gabungan")
     st.write("Data berikut adalah hasil penggabungan dan pembersihan dari 3 file Excel.")
-    st.dataframe(df.sample(10), use_container_width=True)
+    st.dataframe(df.head(), use_container_width=True)
     st.caption(f"Total data yang digunakan untuk melatih model: {df.shape[0]} baris.")
