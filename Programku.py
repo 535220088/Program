@@ -1,13 +1,9 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-# import matplotlib.pyplot as plt # Tidak digunakan lagi jika CM tidak ditampilkan
-import pickle # Impor pickle
-# from xgboost import XGBClassifier # Tidak perlu lagi
-# from sklearn.ensemble import RandomForestClassifier # Tidak perlu lagi
-# from sklearn.model_selection import train_test_split # Tidak perlu lagi
-from sklearn.preprocessing import MinMaxScaler # Masih perlu untuk scaler
-# from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay # Tidak digunakan lagi
+# import matplotlib.pyplot as plt # Tidak digunakan lagi
+import pickle
+from sklearn.preprocessing import MinMaxScaler
 import openpyxl  # Diperlukan oleh pandas untuk membaca file Excel
 
 # Menggunakan cache untuk data loading & preprocessing
@@ -16,7 +12,6 @@ def load_and_process_data(file_jkt, file_bgr, file_tma):
     """
     Fungsi ini mengambil semua langkah preprocessing data
     dari notebook Anda dan mengembalikannya sebagai DataFrame yang bersih.
-    (Fungsi ini relatif sama, hanya memastikan return df bersih)
     """
     try:
         # 1. Load Data
@@ -26,42 +21,44 @@ def load_and_process_data(file_jkt, file_bgr, file_tma):
 
         # 2. Preprocessing 'jkt' (Stasiun Kemayoran)
         jkt = jkt.iloc[5:].reset_index(drop=True)
-        jkt.columns = jkt.iloc[1]
-        jkt = jkt[2:].reset_index(drop=True)
+        if len(jkt) > 1:
+            jkt.columns = jkt.iloc[1]
+            jkt = jkt[2:].reset_index(drop=True)
+        else: return None
         numeric_cols_jkt = ['TN', 'TX', 'TAVG', 'RH_AVG', 'RR']
         for col in numeric_cols_jkt:
-            jkt[col] = pd.to_numeric(jkt[col], errors='coerce')
+            if col in jkt.columns: jkt[col] = pd.to_numeric(jkt[col], errors='coerce')
+        if 'TANGGAL' not in jkt.columns: return None
         jkt['TANGGAL'] = pd.to_datetime(jkt['TANGGAL'], format='%d-%m-%Y', errors='coerce')
         jkt = jkt.sort_values('TANGGAL').reset_index(drop=True)
         jkt = jkt.dropna(subset=['TANGGAL'])
         jkt = jkt.drop_duplicates(subset=['TANGGAL'])
         jkt.replace(8888, np.nan, inplace=True)
         for col in ['TN', 'TX', 'TAVG', 'RH_AVG']:
-            if col in jkt.columns: # Check if column exists
-               jkt[col] = jkt[col].interpolate(method='linear')
-        if 'RR' in jkt.columns:
-            jkt['RR'] = jkt['RR'].fillna(0)
+            if col in jkt.columns: jkt[col] = jkt[col].interpolate(method='linear')
+        if 'RR' in jkt.columns: jkt['RR'] = jkt['RR'].fillna(0)
 
         # 3. Preprocessing 'bgr' (Stasiun Citeko)
         bgr = bgr.iloc[5:].reset_index(drop=True)
-        bgr.columns = bgr.iloc[1]
-        bgr = bgr[2:].reset_index(drop=True)
+        if len(bgr) > 1:
+            bgr.columns = bgr.iloc[1]
+            bgr = bgr[2:].reset_index(drop=True)
+        else: return None
         numeric_cols_bgr = ['TN', 'TX', 'TAVG', 'RH_AVG', 'RR']
         for col in numeric_cols_bgr:
-             if col in bgr.columns:
-                bgr[col] = pd.to_numeric(bgr[col], errors='coerce')
+             if col in bgr.columns: bgr[col] = pd.to_numeric(bgr[col], errors='coerce')
+        if 'TANGGAL' not in bgr.columns: return None
         bgr['TANGGAL'] = pd.to_datetime(bgr['TANGGAL'], format='%d-%m-%Y', errors='coerce')
         bgr = bgr.sort_values('TANGGAL').reset_index(drop=True)
         bgr = bgr.dropna(subset=['TANGGAL'])
         bgr = bgr.drop_duplicates(subset=['TANGGAL'])
         bgr.replace(8888, np.nan, inplace=True)
         for col in ['TN', 'TX', 'TAVG', 'RH_AVG']:
-             if col in bgr.columns:
-                bgr[col] = bgr[col].interpolate(method='linear')
-        if 'RR' in bgr.columns:
-            bgr['RR'] = bgr['RR'].fillna(0)
+             if col in bgr.columns: bgr[col] = bgr[col].interpolate(method='linear')
+        if 'RR' in bgr.columns: bgr['RR'] = bgr['RR'].fillna(0)
 
         # 4. Preprocessing 'tma' (TMA Banjir)
+        if 'Tanggal' not in tma.columns or 'Banjir' not in tma.columns: return None
         tma['Tanggal'] = pd.to_datetime(tma['Tanggal'], format='%d-%m-%Y', errors='coerce')
         tma = tma.dropna(subset=['Tanggal'])
         tma['Banjir'] = pd.to_numeric(tma['Banjir'], errors='coerce')
@@ -69,21 +66,16 @@ def load_and_process_data(file_jkt, file_bgr, file_tma):
         tma['Banjir'] = tma['Banjir'].astype(int)
 
         # 5. Gabungkan DataFrames (Gunakan inner join)
+        # !!! Gunakan suffix _JKT dan _BGR seperti di notebook !!!
         gabung = pd.merge(jkt, bgr, on='TANGGAL', suffixes=('_JKT', '_BGR'), how='inner')
         df = pd.merge(gabung, tma, left_on='TANGGAL', right_on='Tanggal', how='inner')
         df.drop(columns=['Tanggal'], inplace=True) # Hapus kolom Tanggal duplikat
 
-        # 6. Hapus baris NaN final dan set index
+        # 6. Hapus baris NaN final
         df = df.dropna()
-        # df = df.set_index('TANGGAL') # Optional: Set TANGGAL as index
 
-        # Kolom yang di-rename harus ada setelah merge
-        rename_dict = {
-            'TN_JKT': 'TN_Jakarta', 'TX_JKT': 'TX_Jakarta', 'TAVG_JKT': 'TAVG_Jakarta', 'RH_AVG_JKT': 'RH_AVG_Jakarta', 'RR_JKT': 'RR_Jakarta',
-            'TN_BGR': 'TN_Bogor', 'TX_BGR': 'TX_Bogor', 'TAVG_BGR': 'TAVG_Bogor', 'RH_AVG_BGR': 'RH_AVG_Bogor', 'RR_BGR': 'RR_Bogor'
-        }
-        # Rename hanya kolom yang ada di DataFrame
-        df = df.rename(columns={k: v for k, v in rename_dict.items() if k in df.columns})
+        # !!! HAPUS LANGKAH RENAME !!!
+        # df = df.rename(columns={...}) # Baris ini dihapus
 
         return df
 
@@ -111,20 +103,20 @@ def load_models_and_scalers(xgb_model_path="best_xgboost_model.pkl",
             xgb_scaler = pickle.load(f_xgb_scaler)
         with open(rf_model_path, 'rb') as f_rf_model:
             rf_model = pickle.load(f_rf_model)
+        # Asumsi scaler RF sama, jadi kita muat scaler XGB lagi (atau yang sesuai)
         with open(rf_scaler_path, 'rb') as f_rf_scaler:
-            rf_scaler = pickle.load(f_rf_scaler)
+             rf_scaler = pickle.load(f_rf_scaler) # Muat scaler RF juga
 
         st.success("Model XGBoost, Model Random Forest, dan Scaler berhasil dimuat.")
-        # Asumsikan kedua model terbaik menggunakan scaler yang sama (dari data NoLag)
-        # Jika berbeda, Anda perlu memuat keduanya dan memilih yang sesuai
-        return xgb_model, rf_model, xgb_scaler # Mengembalikan 1 scaler saja jika sama
+        # Kembalikan kedua scaler jika mungkin berbeda
+        return xgb_model, rf_model, xgb_scaler, rf_scaler
 
     except FileNotFoundError as e:
         st.error(f"Error: File '{e.filename}' tidak ditemukan. Pastikan file model dan scaler ada di folder ini.")
-        return None, None, None
+        return None, None, None, None
     except Exception as e:
         st.error(f"Terjadi error saat memuat model atau scaler: {e}")
-        return None, None, None
+        return None, None, None, None
 
 # --- Halaman Utama Aplikasi ---
 st.set_page_config(page_title="Prediksi Banjir Jakarta", layout="wide")
@@ -137,22 +129,20 @@ file_bgr = 'Stasiun Citeko.xlsx'
 file_tma = 'TMA Banjir.xlsx'
 
 # Muat model dan scaler
-# Sesuaikan nama file .pkl jika perlu (misal jika yang terbaik pakai _lag)
-xgb_model, rf_model, scaler = load_models_and_scalers(
+xgb_model, rf_model, xgb_scaler, rf_scaler = load_models_and_scalers(
     xgb_model_path="best_xgboost_model.pkl",
     xgb_scaler_path="best_xgboost_scaler.pkl",
     rf_model_path="best_randomforest_model.pkl",
-    rf_scaler_path="best_randomforest_scaler.pkl" # Asumsi scaler RF sama dengan XGB
+    rf_scaler_path="best_randomforest_scaler.pkl" # Pastikan nama file scaler RF benar
 )
 
 # Hanya lanjutkan jika model dan scaler berhasil dimuat
-if xgb_model is not None and rf_model is not None and scaler is not None:
+if xgb_model is not None and rf_model is not None and xgb_scaler is not None and rf_scaler is not None:
 
-    # Definisikan nama fitur (HARUS SESUAI URUTAN SAAT TRAINING MODEL TANPA LAG)
-    # Urutan ini krusial dan harus sama persis dengan kolom X di notebook saat melatih model NoLag
+    # !!! Gunakan nama fitur ASLI (_JKT, _BGR) seperti saat training !!!
     feature_names = [
-        'TN_Jakarta', 'TX_Jakarta', 'TAVG_Jakarta', 'RH_AVG_Jakarta', 'RR_Jakarta',
-        'TN_Bogor', 'TX_Bogor', 'TAVG_Bogor', 'RH_AVG_Bogor', 'RR_Bogor',
+        'TN_JKT', 'TX_JKT', 'TAVG_JKT', 'RH_AVG_JKT', 'RR_JKT',
+        'TN_BGR', 'TX_BGR', 'TAVG_BGR', 'RH_AVG_BGR', 'RR_BGR',
         'Bendung Katulampa', 'Pos Depok', 'Manggarai BKB', 'PA. Karet'
     ]
 
@@ -161,26 +151,26 @@ if xgb_model is not None and rf_model is not None and scaler is not None:
 
     input_data = {}
 
-    # Buat input fields (sama seperti sebelumnya)
+    # Buat input fields dengan KEY yang sesuai feature_names (_JKT, _BGR)
     st.sidebar.subheader("Data Tinggi Muka Air (TMA)")
     input_data['Bendung Katulampa'] = st.sidebar.number_input("Bendung Katulampa (cm)", min_value=0.0, value=40.0, format="%.1f", key="katulampa")
     input_data['Pos Depok'] = st.sidebar.number_input("Pos Depok (cm)", min_value=0.0, value=110.0, format="%.1f", key="depok")
     input_data['Manggarai BKB'] = st.sidebar.number_input("Manggarai BKB (cm)", min_value=500.0, value=650.0, format="%.1f", key="manggarai")
     input_data['PA. Karet'] = st.sidebar.number_input("PA. Karet (cm)", min_value=200.0, value=300.0, format="%.1f", key="karet")
 
-    st.sidebar.subheader("Data Cuaca Bogor (Citeko)")
-    input_data['TN_Bogor'] = st.sidebar.number_input("Suhu Min Bogor (°C)", min_value=10.0, value=19.5, format="%.1f", key="tn_bgr")
-    input_data['TX_Bogor'] = st.sidebar.number_input("Suhu Max Bogor (°C)", min_value=15.0, value=26.0, format="%.1f", key="tx_bgr")
-    input_data['TAVG_Bogor'] = st.sidebar.number_input("Suhu Rata-rata Bogor (°C)", min_value=12.0, value=22.0, format="%.1f", key="tavg_bgr")
-    input_data['RH_AVG_Bogor'] = st.sidebar.number_input("Kelembaban Rata-rata Bogor (%)", min_value=50.0, max_value=100.0, value=85.0, format="%.1f", key="rh_bgr")
-    input_data['RR_Bogor'] = st.sidebar.number_input("Curah Hujan Bogor (mm)", min_value=0.0, value=15.0, format="%.1f", key="rr_bgr")
+    st.sidebar.subheader("Data Cuaca Bogor (BGR/Citeko)") # Label diubah sedikit
+    input_data['TN_BGR'] = st.sidebar.number_input("Suhu Min Bogor (°C)", min_value=10.0, value=19.5, format="%.1f", key="tn_bgr")
+    input_data['TX_BGR'] = st.sidebar.number_input("Suhu Max Bogor (°C)", min_value=15.0, value=26.0, format="%.1f", key="tx_bgr")
+    input_data['TAVG_BGR'] = st.sidebar.number_input("Suhu Rata-rata Bogor (°C)", min_value=12.0, value=22.0, format="%.1f", key="tavg_bgr")
+    input_data['RH_AVG_BGR'] = st.sidebar.number_input("Kelembaban Rata-rata Bogor (%)", min_value=50.0, max_value=100.0, value=85.0, format="%.1f", key="rh_bgr")
+    input_data['RR_BGR'] = st.sidebar.number_input("Curah Hujan Bogor (mm)", min_value=0.0, value=15.0, format="%.1f", key="rr_bgr")
 
-    st.sidebar.subheader("Data Cuaca Jakarta (Kemayoran)")
-    input_data['TN_Jakarta'] = st.sidebar.number_input("Suhu Min Jakarta (°C)", min_value=20.0, value=26.0, format="%.1f", key="tn_jkt")
-    input_data['TX_Jakarta'] = st.sidebar.number_input("Suhu Max Jakarta (°C)", min_value=25.0, value=32.0, format="%.1f", key="tx_jkt")
-    input_data['TAVG_Jakarta'] = st.sidebar.number_input("Suhu Rata-rata Jakarta (°C)", min_value=22.0, value=29.0, format="%.1f", key="tavg_jkt")
-    input_data['RH_AVG_Jakarta'] = st.sidebar.number_input("Kelembaban Rata-rata Jakarta (%)", min_value=50.0, max_value=100.0, value=78.0, format="%.1f", key="rh_jkt")
-    input_data['RR_Jakarta'] = st.sidebar.number_input("Curah Hujan Jakarta (mm)", min_value=0.0, value=5.0, format="%.1f", key="rr_jkt")
+    st.sidebar.subheader("Data Cuaca Jakarta (JKT/Kemayoran)") # Label diubah sedikit
+    input_data['TN_JKT'] = st.sidebar.number_input("Suhu Min Jakarta (°C)", min_value=20.0, value=26.0, format="%.1f", key="tn_jkt")
+    input_data['TX_JKT'] = st.sidebar.number_input("Suhu Max Jakarta (°C)", min_value=25.0, value=32.0, format="%.1f", key="tx_jkt")
+    input_data['TAVG_JKT'] = st.sidebar.number_input("Suhu Rata-rata Jakarta (°C)", min_value=22.0, value=29.0, format="%.1f", key="tavg_jkt")
+    input_data['RH_AVG_JKT'] = st.sidebar.number_input("Kelembaban Rata-rata Jakarta (%)", min_value=50.0, max_value=100.0, value=78.0, format="%.1f", key="rh_jkt")
+    input_data['RR_JKT'] = st.sidebar.number_input("Curah Hujan Jakarta (mm)", min_value=0.0, value=5.0, format="%.1f", key="rr_jkt")
 
     # Tombol Prediksi
     predict_button = st.sidebar.button("Prediksi Sekarang", type="primary")
@@ -193,20 +183,21 @@ if xgb_model is not None and rf_model is not None and scaler is not None:
         try:
             # Ubah input dictionary ke dataframe
             input_df = pd.DataFrame([input_data])
-            # Pastikan urutan kolom sesuai dengan saat training
+            # Pastikan urutan kolom sesuai dengan feature_names (_JKT, _BGR)
             input_df = input_df[feature_names]
 
-            # Scaling data input menggunakan scaler yang dimuat
-            input_scaled = scaler.transform(input_df)
+            # Scaling data input (Gunakan scaler yang sesuai untuk tiap model)
+            input_scaled_xgb = xgb_scaler.transform(input_df)
+            input_scaled_rf = rf_scaler.transform(input_df)
 
             # --- Lakukan prediksi dengan KEDUA model ---
             # XGBoost
-            prediction_xgb = xgb_model.predict(input_scaled)
-            prediction_proba_xgb = xgb_model.predict_proba(input_scaled)
+            prediction_xgb = xgb_model.predict(input_scaled_xgb)
+            prediction_proba_xgb = xgb_model.predict_proba(input_scaled_xgb)
 
             # Random Forest
-            prediction_rf = rf_model.predict(input_scaled)
-            prediction_proba_rf = rf_model.predict_proba(input_scaled)
+            prediction_rf = rf_model.predict(input_scaled_rf)
+            prediction_proba_rf = rf_model.predict_proba(input_scaled_rf)
 
             # --- Tampilkan Perbandingan Prediksi ---
             st.subheader("Perbandingan Prediksi Model")
@@ -248,6 +239,7 @@ if xgb_model is not None and rf_model is not None and scaler is not None:
     if df_display is not None:
         st.divider()
         st.header("📂 Cuplikan Data Gabungan (Setelah Preprocessing)")
+        # Tampilkan head dengan nama kolom asli (_JKT, _BGR)
         st.dataframe(df_display.head(), use_container_width=True)
         st.caption(f"Data ini (versi tanpa lag) digunakan untuk melatih model yang dimuat. Total baris asli: {df_display.shape[0]}")
 else:
