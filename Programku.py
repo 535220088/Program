@@ -169,7 +169,7 @@ if xgb_model is not None and rf_model is not None and xgb_scaler is not None and
     input_data['TX_Jakarta'] = st.sidebar.number_input("Suhu Max Jakarta (°C)", min_value=0.0, value=32.2, format="%.1f")
     input_data['TAVG_Jakarta'] = st.sidebar.number_input("Suhu Rata-rata Jakarta (°C)", min_value=0.0, value=29.6, format="%.1f")
     input_data['RH_AVG_Jakarta'] = st.sidebar.number_input("Kelembaban Rata-rata Jakarta (%)", min_value=0.0, value=77.0, format="%.1f")
-    input_data['RR_Jakarta'] = st.sidebar.number_input("Curah Hujan Jakarta (mm)", min_value=0.0, value=1.8, format="%.1f"
+    input_data['RR_Jakarta'] = st.sidebar.number_input("Curah Hujan Jakarta (mm)", min_value=0.0, value=1.8, format="%.1f")
 
     # Tombol Prediksi
     predict_button = st.sidebar.button("Prediksi Sekarang", type="primary")
