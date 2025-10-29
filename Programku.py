@@ -151,26 +151,25 @@ if xgb_model is not None and rf_model is not None and xgb_scaler is not None and
 
     input_data = {}
 
-    # Buat input fields dengan KEY yang sesuai feature_names (_JKT, _BGR)
     st.sidebar.subheader("Data Tinggi Muka Air (TMA)")
-    input_data['Bendung Katulampa'] = st.sidebar.number_input("Bendung Katulampa (cm)", min_value=0.0, value=40.0, format="%.1f", key="katulampa")
-    input_data['Pos Depok'] = st.sidebar.number_input("Pos Depok (cm)", min_value=0.0, value=110.0, format="%.1f", key="depok")
-    input_data['Manggarai BKB'] = st.sidebar.number_input("Manggarai BKB (cm)", min_value=500.0, value=650.0, format="%.1f", key="manggarai")
-    input_data['PA. Karet'] = st.sidebar.number_input("PA. Karet (cm)", min_value=200.0, value=300.0, format="%.1f", key="karet")
+    input_data['Bendung Katulampa'] = st.sidebar.number_input("Bendung Katulampa (cm)", min_value=0.0, value=20.0, format="%.1f")
+    input_data['Pos Depok'] = st.sidebar.number_input("Pos Depok (cm)", min_value=0.0, value=95.0, format="%.1f")
+    input_data['Manggarai BKB'] = st.sidebar.number_input("Manggarai BKB (cm)", min_value=0.0, value=620.0, format="%.1f")
+    input_data['PA. Karet'] = st.sidebar.number_input("PA. Karet (cm)", min_value=0.0, value=260.0, format="%.1f")
+    
+    st.sidebar.subheader("Data Cuaca Bogor")
+    input_data['TN_Bogor'] = st.sidebar.number_input("Suhu Min Bogor (°C)", min_value=0.0, value=19.6, format="%.1f")
+    input_data['TX_Bogor'] = st.sidebar.number_input("Suhu Max Bogor (°C)", min_value=0.0, value=25.8, format="%.1f")
+    input_data['TAVG_Bogor'] = st.sidebar.number_input("Suhu Rata-rata Bogor (°C)", min_value=0.0, value=22.2, format="%.1f")
+    input_data['RH_AVG_Bogor'] = st.sidebar.number_input("Kelembaban Rata-rata Bogor (%)", min_value=0.0, value=92.0, format="%.1f")
+    input_data['RR_Bogor'] = st.sidebar.number_input("Curah Hujan Bogor (mm)", min_value=0.0, value=23.5, format="%.1f")
 
-    st.sidebar.subheader("Data Cuaca Bogor (BGR/Citeko)") # Label diubah sedikit
-    input_data['TN_BGR'] = st.sidebar.number_input("Suhu Min Bogor (°C)", min_value=10.0, value=19.5, format="%.1f", key="tn_bgr")
-    input_data['TX_BGR'] = st.sidebar.number_input("Suhu Max Bogor (°C)", min_value=15.0, value=26.0, format="%.1f", key="tx_bgr")
-    input_data['TAVG_BGR'] = st.sidebar.number_input("Suhu Rata-rata Bogor (°C)", min_value=12.0, value=22.0, format="%.1f", key="tavg_bgr")
-    input_data['RH_AVG_BGR'] = st.sidebar.number_input("Kelembaban Rata-rata Bogor (%)", min_value=50.0, max_value=100.0, value=85.0, format="%.1f", key="rh_bgr")
-    input_data['RR_BGR'] = st.sidebar.number_input("Curah Hujan Bogor (mm)", min_value=0.0, value=15.0, format="%.1f", key="rr_bgr")
-
-    st.sidebar.subheader("Data Cuaca Jakarta (JKT/Kemayoran)") # Label diubah sedikit
-    input_data['TN_JKT'] = st.sidebar.number_input("Suhu Min Jakarta (°C)", min_value=20.0, value=26.0, format="%.1f", key="tn_jkt")
-    input_data['TX_JKT'] = st.sidebar.number_input("Suhu Max Jakarta (°C)", min_value=25.0, value=32.0, format="%.1f", key="tx_jkt")
-    input_data['TAVG_JKT'] = st.sidebar.number_input("Suhu Rata-rata Jakarta (°C)", min_value=22.0, value=29.0, format="%.1f", key="tavg_jkt")
-    input_data['RH_AVG_JKT'] = st.sidebar.number_input("Kelembaban Rata-rata Jakarta (%)", min_value=50.0, max_value=100.0, value=78.0, format="%.1f", key="rh_jkt")
-    input_data['RR_JKT'] = st.sidebar.number_input("Curah Hujan Jakarta (mm)", min_value=0.0, value=5.0, format="%.1f", key="rr_jkt")
+    st.sidebar.subheader("Data Cuaca Jakarta")
+    input_data['TN_Jakarta'] = st.sidebar.number_input("Suhu Min Jakarta (°C)", min_value=0.0, value=26.4, format="%.1f")
+    input_data['TX_Jakarta'] = st.sidebar.number_input("Suhu Max Jakarta (°C)", min_value=0.0, value=32.2, format="%.1f")
+    input_data['TAVG_Jakarta'] = st.sidebar.number_input("Suhu Rata-rata Jakarta (°C)", min_value=0.0, value=29.6, format="%.1f")
+    input_data['RH_AVG_Jakarta'] = st.sidebar.number_input("Kelembaban Rata-rata Jakarta (%)", min_value=0.0, value=77.0, format="%.1f")
+    input_data['RR_Jakarta'] = st.sidebar.number_input("Curah Hujan Jakarta (mm)", min_value=0.0, value=1.8, format="%.1f"
 
     # Tombol Prediksi
     predict_button = st.sidebar.button("Prediksi Sekarang", type="primary")
