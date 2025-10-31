@@ -90,8 +90,8 @@ def load_and_process_data(file_jkt, file_bgr, file_tma):
 @st.cache_resource
 def load_models_and_scalers(xgb_model_path="best_xgboost_model.pkl",
                            xgb_scaler_path="best_xgboost_scaler.pkl",
-                           rf_model_path="best_randomforest_model.pkl",
-                           rf_scaler_path="best_randomforest_scaler.pkl"):
+                           rf_model_path="best_random_forest_model.pkl",
+                           rf_scaler_path="best_random_forest_scaler.pkl"):
     """
     Memuat model XGBoost terbaik, model Random Forest terbaik,
     dan scaler yang sesuai dari file pickle.
