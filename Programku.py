@@ -221,7 +221,7 @@ if xgb_model is not None and rf_model is not None and xgb_scaler is not None and
                     st.success(f"**Aman / Tidak Banjir**")
                 st.metric("Probabilitas Banjir", f"{prediction_proba_rf[0][1]:.2%}")
                 st.metric("Probabilitas Aman", f"{prediction_proba_rf[0][0]:.2%}")
-                st.caption("Akurasi Test: 0.8152 (dari notebook)") # Sesuaikan akurasi ini
+                st.caption("Akurasi Test: 0.8261 (dari notebook)") # Sesuaikan akurasi ini
 
             # Menampilkan data input yang digunakan
             st.subheader("Data Input yang Digunakan:")
