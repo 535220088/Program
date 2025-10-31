@@ -132,8 +132,8 @@ file_tma = 'TMA Banjir.xlsx'
 xgb_model, rf_model, xgb_scaler, rf_scaler = load_models_and_scalers(
     xgb_model_path="best_xgboost_model.pkl",
     xgb_scaler_path="best_xgboost_scaler.pkl",
-    rf_model_path="best_randomforest_model.pkl",
-    rf_scaler_path="best_randomforest_scaler.pkl" # Pastikan nama file scaler RF benar
+    rf_model_path="best_random_forest_model.pkl",
+    rf_scaler_path="best_random_forest_scaler.pkl" # Pastikan nama file scaler RF benar
 )
 
 # Hanya lanjutkan jika model dan scaler berhasil dimuat
