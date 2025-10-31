@@ -204,7 +204,7 @@ if xgb_model is not None and rf_model is not None and xgb_scaler is not None and
             col1, col2 = st.columns(2)
 
             with col1:
-                st.markdown("#### XGBoost (Default)") # Ganti nama jika model terbaik Anda berbeda
+                st.markdown("#### XGBoost") # Ganti nama jika model terbaik Anda berbeda
                 if prediction_xgb[0] == 1:
                     st.error(f"**Potensi BANJIR**")
                 else:
@@ -214,7 +214,7 @@ if xgb_model is not None and rf_model is not None and xgb_scaler is not None and
                 st.caption("Akurasi Test: 0.8175 (dari notebook)") # Sesuaikan akurasi ini
 
             with col2:
-                st.markdown("#### Random Forest (Grid Search)") # Ganti nama jika model terbaik Anda berbeda
+                st.markdown("#### Random Forest") # Ganti nama jika model terbaik Anda berbeda
                 if prediction_rf[0] == 1:
                     st.error(f"**Potensi BANJIR**")
                 else:
