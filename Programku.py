@@ -88,7 +88,6 @@ def load_models(xgb_model_path="best_xgboost_model.pkl",
                 rf_model_path="best_random_forest_model.pkl"):
     """
     Memuat model XGBoost terbaik dan model Random Forest terbaik
-    dari file pickle. (TANPA SCALER)
     """
     try:
         with open(xgb_model_path, 'rb') as f_xgb_model:
@@ -203,6 +202,27 @@ if xgb_model is not None and rf_model is not None:
     if df_display is not None:
         st.divider()
         st.header("📂 Cuplikan Data Gabungan (Setelah Preprocessing)")
+        
+        # --- PERUBAHAN 2: Menambahkan Legenda/Keterangan Fitur ---
+        with st.expander("ℹ️ Keterangan Kode Fitur (Dataset)"):
+            st.markdown("""
+            **Penjelasan Singkatan pada Kolom Dataset:**
+            
+            | Kode | Kepanjangan | Deskripsi |
+            |---|---|---|
+            | **TN** | *Temperature Minimum* | Suhu udara minimum (°C) |
+            | **TX** | *Temperature Maximum* | Suhu udara maksimum (°C) |
+            | **TAVG** | *Temperature Average* | Suhu udara rata-rata (°C) |
+            | **RH_AVG** | *Relative Humidity Average* | Kelembaban udara rata-rata (%) |
+            | **RR** | *Rainfall Rate* | Curah hujan (mm) |
+            | **_BGR** | *Bogor* | Data berasal dari Stasiun Citeko (Bogor) |
+            | **_JKT** | *Jakarta* | Data berasal dari Stasiun Kemayoran (Jakarta) |
+            
+            **Contoh:**
+            * `TN_BGR`: Suhu Minimum di Bogor.
+            * `RR_JKT`: Curah Hujan di Jakarta.
+            """)
+
         st.dataframe(df_display.head(), use_container_width=True)
         st.caption(f"Data ini digunakan untuk melatih model. Total baris bersih: {df_display.shape[0]}")
 else:
