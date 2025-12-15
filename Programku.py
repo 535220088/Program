@@ -113,8 +113,8 @@ file_bgr = 'Stasiun Citeko.xlsx'
 file_tma = 'TMA Banjir.xlsx'
 
 xgb_model, rf_model = load_models(
-    xgb_model_path="best_xgboost_model.pkl",
-    rf_model_path="best_random_forest_model.pkl"
+    xgb_model_path="model/best_xgboost_model.pkl",
+    rf_model_path="model/best_random_forest_model.pkl"
 )
 
 if xgb_model is not None and rf_model is not None:
