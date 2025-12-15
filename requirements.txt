@@ -1,7 +1,6 @@
-streamlit
-pandas
 numpy
+pandas
 matplotlib
-xgboost
 scikit-learn
-openpyxl
+xgboost
+streamlit

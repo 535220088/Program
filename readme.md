@@ -1,11 +1,9 @@
 # 🌊 Aplikasi Prediksi Banjir Jakarta
 
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://prediksi-banjir-jakarta.streamlit.app/)
-![Python Version](https://img.shields.io/badge/python-3.8%2B-blue)
-![Status](https://img.shields.io/badge/Status-Skripsi%20Ready-success)
 
 ## 📌 Tentang Program
-Repositori ini berisi kode sumber (source code) untuk **Aplikasi Prediksi Banjir Jakarta**. Program ini dikembangkan sebagai bagian dari **Skripsi/Tugas Akhir** (NIM: 535220088) untuk memprediksi potensi banjir di wilayah Jakarta berdasarkan parameter cuaca dan data historis.
+Repositori ini berisi kode sumber (source code) untuk **Aplikasi Prediksi Banjir Jakarta**. Program ini dikembangkan sebagai bagian dari **Skripsi/Tugas Akhir** untuk memprediksi potensi banjir di wilayah Jakarta berdasarkan parameter cuaca dan data historis.
 
 Aplikasi ini dibangun menggunakan bahasa pemrograman **Python** dengan framework **Streamlit** untuk antarmuka web yang interaktif dan mudah digunakan.
 
@@ -65,7 +63,7 @@ Jika Anda ingin menjalankan program ini di komputer lokal (localhost), ikuti lan
 
 Berikut adalah penjelasan struktur file dalam repositori ini:
 
-* **`app.py`** (atau `main.py`): File utama aplikasi. Berisi kode untuk menjalankan antarmuka Streamlit dan logika prediksi.
+* **`Programku.py`**: File utama aplikasi. Berisi kode untuk menjalankan antarmuka Streamlit dan logika prediksi.
 * **`requirements.txt`**: Daftar pustaka Python yang wajib diinstall (seperti `streamlit`, `pandas`, `scikit-learn`, `numpy`).
 * **`dataset/`**: Folder yang menyimpan data latih (CSV) curah hujan dan data banjir historis.
 * **`model/`**: Folder atau file (misal `.pkl`) yang berisi model Machine Learning yang sudah dilatih.
