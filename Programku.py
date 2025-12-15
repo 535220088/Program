@@ -83,8 +83,8 @@ def load_and_process_data(file_jkt, file_bgr, file_tma):
         return None
 
 @st.cache_resource
-def load_models(xgb_model_path="best_xgboost_model.pkl",
-                rf_model_path="best_random_forest_model.pkl"):
+def load_models(xgb_model_path="model/best_xgboost_model.pkl",
+                rf_model_path="model/best_random_forest_model.pkl"):
     """
     Memuat model XGBoost terbaik dan model Random Forest terbaik
     """
