@@ -108,9 +108,9 @@ st.set_page_config(page_title="Prediksi Banjir Jakarta", layout="wide")
 st.title("💧 Aplikasi Prediksi Banjir Jakarta")
 st.write("Aplikasi ini menggunakan model Machine Learning (XGBoost & Random Forest) yang sudah dilatih untuk memprediksi potensi banjir.")
 
-file_jkt = 'Stasiun Kemayoran.xlsx'
-file_bgr = 'Stasiun Citeko.xlsx'
-file_tma = 'TMA Banjir.xlsx'
+file_jkt = 'dataset/Stasiun Kemayoran.xlsx'
+file_bgr = 'dataset/Stasiun Citeko.xlsx'
+file_tma = 'dataset/TMA Banjir.xlsx'
 
 xgb_model, rf_model = load_models(
     xgb_model_path="model/best_xgboost_model.pkl",
