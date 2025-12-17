@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import pickle
+import openpyxl
 
 @st.cache_data
 def load_and_process_data(file_jkt, file_bgr, file_tma):
